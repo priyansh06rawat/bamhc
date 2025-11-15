@@ -28,7 +28,10 @@ const EnhancedBAMHCSystem = () => {
       'mongrel', 'mud race', 'race traitor', 'race mixing', 'white genocide',
       'replacement theory', 'cultural marxism', 'globalist', 'international jewry',
       'zionist conspiracy', 'sharia law', 'jihad', 'infidel', 'kafir', 'apostate',
-      'death to', 'hang them all', 'gas them', 'burn them', 'shoot them all'
+      'death to', 'hang them all', 'gas them', 'burn them', 'shoot them all',
+      'dirty immigrants', 'filthy immigrants', 'illegal aliens', 'invaders', 'send them back',
+      'go back to', 'not belong here', 'ruining our country', 'destroying our nation',
+      'taking our jobs', 'stealing our', 'leech', 'welfare queen', 'anchor baby'
     ],
     tier2_threats: [
       'hurt', 'harm', 'attack', 'assault', 'beat', 'punch', 'strike', 'hit',
@@ -60,10 +63,11 @@ const EnhancedBAMHCSystem = () => {
     racial_slurs: [
       'n word', 'colored', 'negro', 'coon', 'spook', 'tar baby',
       'wetback', 'beaner', 'spic', 'greaser', 'chink', 'gook', 'nip', 'jap',
-      'towelhead', 'raghead', 'camel jockey', 'curry muncher',
+      'towelhead', 'raghead', 'camel jockey', 'curry muncher', 'sand',
       'paki', 'kike', 'hymie', 'yid', 'cracker', 'honky', 'whitey', 'gringo',
       'redskin', 'injun', 'squaw', 'savage', 'abo', 'boong', 'dago', 'wop',
-      'guinea', 'polack', 'mick', 'paddy', 'limey', 'frog', 'kraut', 'hun'
+      'guinea', 'polack', 'mick', 'paddy', 'limey', 'frog', 'kraut', 'hun',
+      'immigrant', 'migrant', 'foreigner', 'outsider', 'alien', 'refugees'
     ],
     religious_hate: [
       'christ killer', 'heathen', 'blasphemer', 'heretic', 'infidel', 'pagan',
@@ -110,10 +114,15 @@ const EnhancedBAMHCSystem = () => {
       /(?:dead|finished|done for)/i
     ],
     hate_speech: [
-      /(?:all|every) \w+ (?:should|must|need to) (?:die|be killed)/i,
+      /(?:all|every|those|these) (?:dirty|filthy|disgusting)? ?(?:immigrant|migrant|refugee|foreigner)s? (?:are|is|should|must|need)/i,
+      /(?:immigrant|migrant|refugee|foreigner)s? (?:are|is) (?:ruining|destroying|invading|infesting)/i,
+      /send (?:them|those|these) (?:back|away|home)/i,
+      /(?:all|every) \w+ (?:should|must|need to) (?:die|be killed|go back|leave)/i,
       /(?:death|violence) to (?:all|every)/i,
-      /\w+ (?:are|is) (?:inferior|subhuman|animals)/i,
-      /(?:exterminate|eliminate|eradicate) (?:all|every|the) \w+/i
+      /\w+ (?:are|is) (?:inferior|subhuman|animals|vermin|parasites)/i,
+      /(?:exterminate|eliminate|eradicate|get rid of) (?:all|every|the|those|these) \w+/i,
+      /(?:dirty|filthy|disgusting) (?:immigrant|migrant|refugee|foreigner|people)/i,
+      /(?:ruining|destroying) (?:our|the) (?:country|nation|society)/i
     ],
     harassment: [
       /(?:you|u) (?:are|r) (?:so|such a?) \w+/i,
@@ -148,14 +157,23 @@ const EnhancedBAMHCSystem = () => {
     
     lexicon.forEach(term => {
       if (term.includes(' ')) {
+        // Multi-word phrase - check in full text
         if (text.includes(term)) {
           matchCount++;
           matchedTerms.push(term);
         }
       } else {
+        // Single word - check in word array
         if (words.includes(term)) {
           matchCount++;
           matchedTerms.push(term);
+        }
+        // Also check as substring for compound words
+        if (text.includes(term) && term.length > 4) {
+          if (!matchedTerms.includes(term)) {
+            matchCount++;
+            matchedTerms.push(term);
+          }
         }
       }
     });
@@ -164,7 +182,7 @@ const EnhancedBAMHCSystem = () => {
     
     const density = matchCount / Math.max(words.length, 1);
     const baseScore = Math.min(density * 5 * weight, weight);
-    const multiMatchBonus = matchCount > 1 ? Math.min(matchCount * 0.1, 0.3) : 0;
+    const multiMatchBonus = matchCount > 1 ? Math.min(matchCount * 0.15, 0.4) : 0;
     
     return {
       score: Math.min(baseScore + multiMatchBonus, 1.0),
